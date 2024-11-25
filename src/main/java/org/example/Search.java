@@ -24,12 +24,10 @@ public class Search {
         driver.manage().window().maximize();
         driver.get("http://localhost:3000");
 
-        // Click to open login page
         driver.findElement(By.className("fa-right-to-bracket")).click();
         driver.findElement(By.id("signIn")).click();
         sleep(3000);
 
-        // Đăng nhập (Điền email và mật khẩu)
         WebElement emailField = driver.findElement(By.id("email"));
         emailField.clear();
         emailField.sendKeys("validEmail@example.com");
@@ -50,9 +48,8 @@ public class Search {
         searchField.clear();
         searchField.sendKeys("Kem chong nang");
 
-        sleep(3000); // Đợi kết quả tự động
+        sleep(3000);
 
-        // Kiểm tra kết quả tìm kiếm có chứa từ khóa "Laptop"
         WebElement searchResult = driver.findElement(By.className("listProductHome"));
     }
 
@@ -63,7 +60,7 @@ public class Search {
         searchField.clear();
         searchField.sendKeys("Gakibake");
 
-        sleep(3000); // Đợi kết quả tự động
+        sleep(3000);
 
         // Kiểm tra thông báo không có kết quả tìm kiếm
         WebElement noResultMessage = driver.findElement(By.className("listProductHome"));
@@ -72,12 +69,12 @@ public class Search {
 
     @Test
     public void testSearchInvalidKeyword() {
-        // Tìm kiếm với từ khóa không hợp lệ (ví dụ, ký tự đặc biệt)
+        // Tìm kiếm với từ khóa không hợp lệ
         WebElement searchField = driver.findElement(By.id("search"));
         searchField.clear();
         searchField.sendKeys("@#$%^&*()");
 
-        sleep(3000); // Đợi kết quả tự động
+        sleep(3000);
 
         // Kiểm tra kết quả tìm kiếm có hiển thị thông báo lỗi hoặc không có kết quả
         WebElement searchResult = driver.findElement(By.className("listProductHome"));
@@ -91,7 +88,7 @@ public class Search {
         searchField.clear();
         searchField.sendKeys("");
 
-        sleep(3000); // Đợi kết quả tự động
+        sleep(3000);
 
         // Kiểm tra hệ thống không tìm kiếm khi từ khóa trống
         WebElement searchResult = driver.findElement(By.className("listProductHome"));
@@ -107,7 +104,6 @@ public class Search {
 
         sleep(3000);
 
-        // Kiểm tra kết quả có chứa từ khóa "Laptop" không
         WebElement searchResult = driver.findElement(By.className("listProductHome"));
         Assert.assertTrue(searchResult.getText().contains("Kem"), "Không tìm thấy sản phẩm với từ khóa ' Kem '");
     }

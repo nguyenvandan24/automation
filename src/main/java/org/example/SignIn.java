@@ -63,7 +63,6 @@ public class SignIn {
         // Kiểm tra thông báo lỗi nếu có
         if (!expectedErrorMessage.isEmpty()) {
             WebElement errorMessage = driver.findElement(By.xpath("//span[@style='color: red; font-size: 13px;']"));
-//            Assert.assertEquals(errorMessage.getText(), expectedErrorMessage, "Lỗi đăng nhập!");
         } else {
             // Kiểm tra chuyển hướng thành công nếu không có lỗi
             String currentUrl = driver.getCurrentUrl();

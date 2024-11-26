@@ -27,19 +27,48 @@ public class Cart {
 
     @Test(priority = 1)
     public void testAddToCartWithoutLogin() {
-        // Locate the product on the homepage
         WebElement product = driver.findElement(By.cssSelector(".listProductHome .item:first-child"));
         WebElement addToCartButton = product.findElement(By.cssSelector("button"));
 
-        // Try to add product to the cart
         addToCartButton.click();
-        sleep(1000); // wait for the action to complete
+        sleep(1000);
 
-        // Verify if the user is redirected to the login page
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("/login"), "User should be redirected to login page when not logged in.");
+        Assert.assertTrue(currentUrl.contains("/login"), "Người dùng không thể thêm sản phẩm nếu chưa đăng nhập.");
     }
 
+    @Test(priority = 2)
+    public void testAddProductToCartAfterLogin() {
+        driver.findElement(By.className("fa-right-to-bracket")).click();
+        driver.findElement(By.id("signIn")).click();
+        sleep(3000);
+
+        WebElement emailField = driver.findElement(By.id("email"));
+        emailField.clear();
+        emailField.sendKeys("validEmail@example.com");
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.clear();
+        passwordField.sendKeys("StrongPass@123");
+
+        WebElement signInButton = driver.findElement(By.className("btn-sign-in"));
+        signInButton.click();
+        sleep(3000);
+
+        WebElement product = driver.findElement(By.cssSelector(".listProductHome .item:first-child"));
+        WebElement addToCartButton = product.findElement(By.cssSelector("button"));
+
+        addToCartButton.click();
+        sleep(1000);
+
+        String productName = product.findElement(By.id("namePro")).getText();
+        driver.findElement(By.className("fa-cart-shopping")).click();
+        sleep(1000);
+
+        WebElement cartTable = driver.findElement(By.cssSelector(".cart-list table tbody"));
+        boolean isProductInCart = cartTable.getText().contains(productName);
+        Assert.assertTrue(isProductInCart, "Sản phẩm thêm vào giỏ hàng không thành công.");
+    }
 
 
     public void sleep(int time){

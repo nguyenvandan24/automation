@@ -38,7 +38,7 @@ public class Cart {
     }
 
     @Test(priority = 2)
-    public void testAddProductToCartAfterLogin() {
+    public void testAddToCartFromCategory() {
         driver.findElement(By.className("fa-right-to-bracket")).click();
         driver.findElement(By.id("signIn")).click();
         sleep(3000);
@@ -55,7 +55,85 @@ public class Cart {
         signInButton.click();
         sleep(3000);
 
-        WebElement product = driver.findElement(By.cssSelector(".listProductHome .item:first-child"));
+        WebElement categoryTab = driver.findElement(By.cssSelector(".sectionProductCate .listProductCateHome1 .ant-tabs-tab:first-child"));
+        categoryTab.click();
+        sleep(3000);
+
+        //Get 1st pro
+        WebElement categoryProduct = driver.findElement(By.cssSelector(".listProductHome3 .item:first-child"));
+        WebElement addToCartButton = categoryProduct.findElement(By.cssSelector("button"));
+
+        addToCartButton.click();
+        sleep(1000);
+
+        //Get namePro
+        String productName = categoryProduct.findElement(By.id("namePro")).getText();
+
+        driver.findElement(By.className("fa-cart-shopping")).click();
+        sleep(3000);
+
+        WebElement cartTable = driver.findElement(By.cssSelector(".cart-list table tbody"));
+        boolean isProductInCart = cartTable.getText().contains(productName);
+        Assert.assertTrue(isProductInCart, "Sản phẩm từ danh mục không được thêm vào giỏ hàng.");
+    }
+
+    @Test(priority = 3)
+    public void testAddToCartFromProductSection() {
+        driver.findElement(By.className("fa-right-to-bracket")).click();
+        driver.findElement(By.id("signIn")).click();
+        sleep(3000);
+
+        WebElement emailField = driver.findElement(By.id("email"));
+        emailField.clear();
+        emailField.sendKeys("validEmail@example.com");
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.clear();
+        passwordField.sendKeys("StrongPass@123");
+
+        WebElement signInButton = driver.findElement(By.className("btn-sign-in"));
+        signInButton.click();
+        sleep(3000);
+
+        WebElement productSection = driver.findElement(By.cssSelector(".sectionProduct"));
+        Assert.assertTrue(productSection.isDisplayed(), "Phần sản phẩm không hiển thị.");
+
+        WebElement product = driver.findElement(By.cssSelector(".listProductHome .item:nth-child(2)"));
+        WebElement addToCartButton = product.findElement(By.cssSelector("button"));
+
+        addToCartButton.click();
+        sleep(3000);
+
+        // Get namePro
+        String productName = product.findElement(By.id("namePro")).getText();
+
+        driver.findElement(By.className("fa-cart-shopping")).click();
+        sleep(3000);
+
+        WebElement cartTable = driver.findElement(By.cssSelector(".cart-list table tbody"));
+        boolean isProductInCart = cartTable.getText().contains(productName);
+        Assert.assertTrue(isProductInCart, "Sản phẩm từ phần sản phẩm không được thêm vào giỏ hàng.");
+    }
+
+    @Test(priority = 4)
+    public void testAddProductToCartFromProDetail() {
+        driver.findElement(By.className("fa-right-to-bracket")).click();
+        driver.findElement(By.id("signIn")).click();
+        sleep(3000);
+
+        WebElement emailField = driver.findElement(By.id("email"));
+        emailField.clear();
+        emailField.sendKeys("validEmail@example.com");
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.clear();
+        passwordField.sendKeys("StrongPass@123");
+
+        WebElement signInButton = driver.findElement(By.className("btn-sign-in"));
+        signInButton.click();
+        sleep(3000);
+
+        WebElement product = driver.findElement(By.cssSelector(".listProductHome .item:nth-child(3)"));
         WebElement addToCartButton = product.findElement(By.cssSelector("button"));
 
         addToCartButton.click();
@@ -63,13 +141,62 @@ public class Cart {
 
         String productName = product.findElement(By.id("namePro")).getText();
         driver.findElement(By.className("fa-cart-shopping")).click();
-        sleep(1000);
+        sleep(3000);
 
         WebElement cartTable = driver.findElement(By.cssSelector(".cart-list table tbody"));
         boolean isProductInCart = cartTable.getText().contains(productName);
         Assert.assertTrue(isProductInCart, "Sản phẩm thêm vào giỏ hàng không thành công.");
     }
 
+    @Test(priority = 5)
+    public void testAddMultipleQuantitiesToCartFromProductDetail() {
+        driver.findElement(By.className("fa-right-to-bracket")).click();
+        driver.findElement(By.id("signIn")).click();
+        sleep(3000);
+
+        WebElement emailField = driver.findElement(By.id("email"));
+        emailField.clear();
+        emailField.sendKeys("validEmail@example.com");
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.clear();
+        passwordField.sendKeys("StrongPass@123");
+
+        WebElement signInButton = driver.findElement(By.className("btn-sign-in"));
+        signInButton.click();
+        sleep(3000);
+
+        driver.findElement(By.cssSelector(".listProductHome .item:nth-child(5) img")).click();
+        sleep(2000);
+
+        WebElement productDetailPage = driver.findElement(By.cssSelector(".product"));
+        Assert.assertTrue(productDetailPage.isDisplayed(), "Trang chi tiết sản phẩm không hiển thị.");
+
+        //+1
+        WebElement increaseButton = driver.findElement(By.id("button-plus"));
+        increaseButton.click();
+        sleep(1000);
+
+        //+1
+        increaseButton.click();
+        sleep(1000);
+
+        //Check quantities
+        WebElement quantityInput = driver.findElement(By.cssSelector(".input-group input"));
+        String quantityValue = quantityInput.getAttribute("value");
+        Assert.assertEquals(quantityValue, "3", "Số lượng sản phẩm không tăng đúng.");
+
+        WebElement addToCartButton = driver.findElement(By.cssSelector(".btn.btn-primary.btn-lg"));
+        addToCartButton.click();
+        sleep(2000);
+
+        driver.findElement(By.className("fa-cart-shopping")).click();
+        sleep(3000);
+
+        WebElement cartTable = driver.findElement(By.cssSelector(".cart-list table tbody"));
+        boolean isProductInCart = cartTable.getText().contains("3");
+        Assert.assertTrue(isProductInCart, "Sản phẩm với số lượng mong muốn không được thêm vào giỏ hàng.");
+    }
 
     public void sleep(int time){
         try {

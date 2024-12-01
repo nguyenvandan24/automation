@@ -10,6 +10,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 public class Cart {
 
 
@@ -304,6 +306,154 @@ public class Cart {
             int currentQuantity = Integer.parseInt(quantitySpan.getText());
             Assert.assertTrue(currentQuantity >= minimumQuantity, "Số lượng sản phẩm giảm dưới mức tối thiểu.");
         }
+    }
+
+    @Test(priority = 8)
+    public void testPriceUpdateOnQuantityChange() {
+        driver.findElement(By.className("fa-right-to-bracket")).click();
+        driver.findElement(By.id("signIn")).click();
+        sleep(3000);
+
+        WebElement emailField = driver.findElement(By.id("email"));
+        emailField.clear();
+        emailField.sendKeys("validEmail@example.com");
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.clear();
+        passwordField.sendKeys("StrongPass@123");
+
+        WebElement signInButton = driver.findElement(By.className("btn-sign-in"));
+        signInButton.click();
+        sleep(3000);
+
+        driver.findElement(By.cssSelector(".listProductHome .item:nth-child(3) img")).click();
+        sleep(2000);
+
+        WebElement addToCartButton = driver.findElement(By.cssSelector(".btn.btn-primary.btn-lg"));
+        addToCartButton.click();
+        sleep(2000);
+
+        driver.findElement(By.className("fa-cart-shopping")).click();
+        sleep(3000);
+
+        //Product row
+        WebElement productRow = driver.findElement(By.cssSelector(".cart-list table tbody tr"));
+
+        //Product price
+        WebElement initialTotalPriceElement = productRow.findElement(By.cssSelector(".total"));
+        String initialTotalPriceText = initialTotalPriceElement.getText();
+        double initialTotalPrice = parsePrice(initialTotalPriceText);
+
+        WebElement increaseQuantityButton = productRow.findElement(By.id("plus"));
+        increaseQuantityButton.click();
+        sleep(1000);
+
+        WebElement newTotalPriceElement = productRow.findElement(By.cssSelector(".total"));
+        String newTotalPriceText = newTotalPriceElement.getText();
+        double newTotalPrice = parsePrice(newTotalPriceText);
+        Assert.assertTrue(newTotalPrice > initialTotalPrice, "Gía sản phẩm không đúng khi số lượng được tăng.");
+
+        WebElement decreaseQuantityButton = productRow.findElement(By.id("minus"));
+        decreaseQuantityButton.click();
+        sleep(1000);
+
+        WebElement finalTotalPriceElement = productRow.findElement(By.cssSelector(".total"));
+        String finalTotalPriceText = finalTotalPriceElement.getText();
+        double finalTotalPrice = parsePrice(finalTotalPriceText);
+        Assert.assertTrue(finalTotalPrice < newTotalPrice, "Gía sản phẩm không đúng khi số lượng sản phẩm giảm.");
+    }
+
+    @Test(priority = 9)
+    public void testRemoveProductFromCart() {
+        driver.findElement(By.className("fa-right-to-bracket")).click();
+        driver.findElement(By.id("signIn")).click();
+        sleep(3000);
+
+        WebElement emailField = driver.findElement(By.id("email"));
+        emailField.clear();
+        emailField.sendKeys("validEmail@example.com");
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.clear();
+        passwordField.sendKeys("StrongPass@123");
+
+        WebElement signInButton = driver.findElement(By.className("btn-sign-in"));
+        signInButton.click();
+        sleep(3000);
+
+        driver.findElement(By.cssSelector(".listProductHome .item:nth-child(3) img")).click();
+        sleep(2000);
+
+        WebElement addToCartButton = driver.findElement(By.cssSelector(".btn.btn-primary.btn-lg"));
+        addToCartButton.click();
+        sleep(2000);
+
+        driver.findElement(By.className("fa-cart-shopping")).click();
+        sleep(3000);
+
+        WebElement removeButton = driver.findElement(By.cssSelector(".product-remove a"));
+        removeButton.click();
+        sleep(1000);
+
+        WebElement confirmButton = driver.findElement(By.cssSelector(".swal2-confirm"));
+        confirmButton.click();
+        sleep(2000);
+
+        WebElement cartTable = driver.findElement(By.cssSelector(".cart-list table tbody"));
+        boolean isProductRemoved = !cartTable.getText().contains("Product Name");
+        Assert.assertTrue(isProductRemoved, "Sản phẩm chưa được xóa khỏi giỏ hàng");
+    }
+
+    @Test(priority = 10)
+    public void testDeleteAllProductsFromCart() {
+        driver.findElement(By.className("fa-right-to-bracket")).click();
+        driver.findElement(By.id("signIn")).click();
+        sleep(3000);
+
+        WebElement emailField = driver.findElement(By.id("email"));
+        emailField.clear();
+        emailField.sendKeys("validEmail@example.com");
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.clear();
+        passwordField.sendKeys("StrongPass@123");
+
+        WebElement signInButton = driver.findElement(By.className("btn-sign-in"));
+        signInButton.click();
+        sleep(3000);
+
+        driver.findElement(By.cssSelector(".listProductHome .item:nth-child(3) img")).click();
+        sleep(2000);
+
+        WebElement addToCartButton = driver.findElement(By.cssSelector(".btn.btn-primary.btn-lg"));
+        addToCartButton.click();
+        sleep(2000);
+        driver.findElement(By.className("fa-cart-shopping")).click();
+        sleep(2000);
+
+        List<WebElement> productRows = driver.findElements(By.cssSelector(".cart-list table tbody tr"));
+        int initialProductCount = productRows.size();
+        Assert.assertTrue(initialProductCount > 0, "Không có sản phẩm nào để xóa.");
+
+        WebElement deleteAllButton = driver.findElement(By.id("delete-all"));
+        deleteAllButton.click();
+        sleep(1000);
+
+        WebElement confirmButton = driver.findElement(By.cssSelector(".swal2-confirm"));
+        if (confirmButton.isDisplayed()) {
+            confirmButton.click();
+            sleep(1000);
+        }
+
+        sleep(2000);
+
+        productRows = driver.findElements(By.cssSelector(".cart-list table tbody tr"));
+        int finalProductCount = productRows.size();
+        Assert.assertEquals(finalProductCount, 0, "Giỏ hàng không trống khi nhấn Xóa tất cả.");
+    }
+    private double parsePrice(String priceText) {
+        priceText = priceText.replaceAll("[^\\d.]", "");
+        return Double.parseDouble(priceText);
     }
 
     public void sleep(int time){

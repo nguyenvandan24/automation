@@ -198,6 +198,114 @@ public class Cart {
         Assert.assertTrue(isProductInCart, "Sản phẩm với số lượng mong muốn không được thêm vào giỏ hàng.");
     }
 
+    //Cart page
+    @Test(priority = 6)
+    public void testChangeQuantityInCart() {
+        driver.findElement(By.className("fa-right-to-bracket")).click();
+        driver.findElement(By.id("signIn")).click();
+        sleep(3000);
+
+        WebElement emailField = driver.findElement(By.id("email"));
+        emailField.clear();
+        emailField.sendKeys("validEmail@example.com");
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.clear();
+        passwordField.sendKeys("StrongPass@123");
+
+        WebElement signInButton = driver.findElement(By.className("btn-sign-in"));
+        signInButton.click();
+        sleep(3000);
+
+        driver.findElement(By.cssSelector(".listProductHome .item:nth-child(3) img")).click();
+        sleep(2000);
+
+        WebElement addToCartButton = driver.findElement(By.cssSelector(".btn.btn-primary.btn-lg"));
+        addToCartButton.click();
+        sleep(2000);
+
+        driver.findElement(By.className("fa-cart-shopping")).click();
+        sleep(3000);
+
+        WebElement cartTable = driver.findElement(By.cssSelector(".cart-list table tbody"));
+        Assert.assertTrue(cartTable.isDisplayed(), "Trang giỏ hàng không hiển thị.");
+
+        WebElement quantitySpan = driver.findElement(By.id("quantity"));
+        int initialQuantity = Integer.parseInt(quantitySpan.getText());
+
+        WebElement increaseButton = driver.findElement(By.id("plus"));
+        increaseButton.click();
+        sleep(1000);
+
+        int increasedQuantity = Integer.parseInt(quantitySpan.getText());
+        Assert.assertEquals(increasedQuantity, initialQuantity + 1, "Số lượng sản phẩm không tăng đúng.");
+
+        WebElement decreaseButton = driver.findElement(By.id("minus"));
+        decreaseButton.click();
+        sleep(1000);
+
+        int decreasedQuantity = Integer.parseInt(quantitySpan.getText());
+        Assert.assertEquals(decreasedQuantity, initialQuantity, "Số lượng sản phẩm không giảm đúng.");
+    }
+    @Test(priority = 7)
+    public void testChangeQuantityInCartToZero() {
+        driver.findElement(By.className("fa-right-to-bracket")).click();
+        driver.findElement(By.id("signIn")).click();
+        sleep(3000);
+
+        WebElement emailField = driver.findElement(By.id("email"));
+        emailField.clear();
+        emailField.sendKeys("validEmail@example.com");
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.clear();
+        passwordField.sendKeys("StrongPass@123");
+
+        WebElement signInButton = driver.findElement(By.className("btn-sign-in"));
+        signInButton.click();
+        sleep(3000);
+
+        driver.findElement(By.cssSelector(".listProductHome .item:nth-child(3) img")).click();
+        sleep(2000);
+
+        WebElement addToCartButton = driver.findElement(By.cssSelector(".btn.btn-primary.btn-lg"));
+        addToCartButton.click();
+        sleep(2000);
+
+        driver.findElement(By.className("fa-cart-shopping")).click();
+        sleep(3000);
+
+        WebElement cartTable = driver.findElement(By.cssSelector(".cart-list table tbody"));
+        Assert.assertTrue(cartTable.isDisplayed(), "Trang giỏ hàng không hiển thị.");
+
+        WebElement quantitySpan = driver.findElement(By.id("quantity"));
+        int initialQuantity = Integer.parseInt(quantitySpan.getText());
+
+        WebElement increaseButton = driver.findElement(By.id("plus"));
+        increaseButton.click();
+        sleep(1000);
+
+        int increasedQuantity = Integer.parseInt(quantitySpan.getText());
+        Assert.assertEquals(increasedQuantity, initialQuantity + 1, "Số lượng sản phẩm không tăng đúng.");
+
+        WebElement decreaseButton = driver.findElement(By.id("minus"));
+        decreaseButton.click();
+        sleep(1000);
+
+        int decreasedQuantity = Integer.parseInt(quantitySpan.getText());
+        Assert.assertEquals(decreasedQuantity, initialQuantity, "Số lượng sản phẩm không giảm đúng.");
+
+        //Check 0
+        int minimumQuantity = 1;
+        for (int i = 0; i < 3; i++) {
+            decreaseButton.click();
+            sleep(1000);
+
+            int currentQuantity = Integer.parseInt(quantitySpan.getText());
+            Assert.assertTrue(currentQuantity >= minimumQuantity, "Số lượng sản phẩm giảm dưới mức tối thiểu.");
+        }
+    }
+
     public void sleep(int time){
         try {
             Thread.sleep(time);

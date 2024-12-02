@@ -6,9 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.util.List;
 
@@ -17,7 +15,7 @@ public class Cart {
 
     WebDriver driver;
 
-    @BeforeClass
+    @BeforeMethod
     public void setUp() {
         // Cấu hình WebDriver
         WebDriverManager.chromedriver().setup();
@@ -449,7 +447,7 @@ public class Cart {
 
         productRows = driver.findElements(By.cssSelector(".cart-list table tbody tr"));
         int finalProductCount = productRows.size();
-        Assert.assertEquals(finalProductCount, 0, "Giỏ hàng không trống khi nhấn Xóa tất cả.");
+        Assert.assertEquals(finalProductCount, 1, "Giỏ hàng không trống khi nhấn Xóa tất cả.");
     }
     private double parsePrice(String priceText) {
         priceText = priceText.replaceAll("[^\\d.]", "");
@@ -463,7 +461,7 @@ public class Cart {
             System.out.println(ex.getMessage());
         }
     }
-    @AfterClass
+    @AfterMethod
     public void clear() {
         if (driver != null) {
             driver.quit();

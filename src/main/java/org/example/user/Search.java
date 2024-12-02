@@ -6,17 +6,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 public class Search {
 
     WebDriver driver;
     ChromeDriver chromeDriver;
 
-    @BeforeClass
+    @BeforeMethod
     public void setUp() {
         // Set up WebDriver
         WebDriverManager.chromedriver().setup();
@@ -116,7 +113,7 @@ public class Search {
             System.out.println(ex.getMessage());
         }
     }
-    @AfterClass
+    @AfterMethod
     public void clear() {
         if (driver != null) {
             driver.quit();
